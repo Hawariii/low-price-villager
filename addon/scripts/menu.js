@@ -1,38 +1,90 @@
+import { world } from "@minecraft/server";
 import { ActionFormData } from "@minecraft/server-ui";
 
-export function openMenu(player, villagerEnabled, auraEnabled) {
+import { CONFIG } from "./config.js";
 
-    const form = new ActionFormData();
+import {
+    enableVillager,
+    disableVillager,
+    isVillagerEnabled
+} from "./effects.js";
 
-    form.title("§6Low Price Villager");
+import {
+    enableAura,
+    disableAura,
+    isAuraEnabled
+} from "./particles.js";
 
-    form.body(
+function openMenu(player) {
+
+    const villager = isVillagerEnabled(player);
+    const aura = isAuraEnabled(player);
+
+    const form = new ActionFormData()
+        .title(CONFIG.menu.title)
+        .body(
 `§fCurrent Status
 
 §a🟢 Villager Discount
-${villagerEnabled ? "§aEnabled" : "§cDisabled"}
+${villager ? "§aEnabled" : "§cDisabled"}
 
 §d✨ Enchant Aura
-${auraEnabled ? "§aEnabled" : "§cDisabled"}
+${aura ? "§aEnabled" : "§cDisabled"}
 
 §8────────────────────`
-    );
+        )
+        .button(CONFIG.menu.buttons.villager)
+        .button(CONFIG.menu.buttons.aura)
+        .button(CONFIG.menu.buttons.close);
 
-    form.button("§eToggle Villager Discount");
-    form.button("§dToggle Enchant Aura");
-    form.button("§7Close");
+    form.show(player).then(result => {
 
-    return form.show(player);
-}            case 0:
-                toggleVillager(player);
+        if (result.canceled) return;
+
+        switch (result.selection) {
+
+            case 0:
+
+                villager
+                    ? disableVillager(player)
+                    : enableVillager(player);
+
+                openMenu(player);
+
                 break;
 
             case 1:
-                toggleAura(player);
+
+                aura
+                    ? disableAura(player)
+                    : enableAura(player);
+
+                openMenu(player);
+
                 break;
 
             case 2:
+
                 return;
+
         }
+
     });
+
+}
+
+world.afterEvents.itemUse.subscribe(event => {
+
+    const player = event.source;
+    const item = event.itemStack;
+
+    if (!item) return;
+
+    if (item.typeId !== CONFIG.toggleItem) return;
+
+    openMenu(player);
+
+});    openMenu(player);
+
+});    });
 }
