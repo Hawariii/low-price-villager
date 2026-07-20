@@ -1,22 +1,31 @@
 export const CONFIG = {
 
+    // =========================
     // General
-    interval: 20,
-    duration: 300,
+    // =========================
+
     toggleItem: "minecraft:stick",
 
-    // Hero of the Village
+    interval: 20,
+
+    duration: 300,
+
+    // =========================
+    // Villager
+    // =========================
+
     villager: {
         effect: "minecraft:village_hero",
         amplifier: 255,
         showParticles: false
     },
 
-    // Enchant Aura
+    // =========================
+    // Aura
+    // =========================
+
     aura: {
         particle: "minecraft:enchanting_table_particle",
-
-        enabled: true,
 
         interval: 2,
 
@@ -24,9 +33,47 @@ export const CONFIG = {
 
         radius: 0.85,
 
-        height: 0.9,
+        height: 1,
 
         speed: 0.12
+    },
+
+    // =========================
+    // Menu
+    // =========================
+
+    menu: {
+
+        title: "§6Low Price Villager",
+
+        body: "§7Select a feature to toggle.",
+
+        buttons: {
+
+            villager: "§eToggle Villager Discount",
+
+            aura: "§dToggle Enchant Aura",
+
+            close: "§7Close"
+
+        }
+
+    },
+
+    // =========================
+    // Messages
+    // =========================
+
+    messages: {
+
+        villagerOn: "§a+ Villager Discount Enabled",
+
+        villagerOff: "§c-Villager Discount Disabled",
+
+        auraOn: "§a+ Enchant Aura Enabled",
+
+        auraOff: "§c- Enchant Aura Disabled"
+
     }
 
 };
