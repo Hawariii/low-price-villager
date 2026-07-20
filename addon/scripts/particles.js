@@ -1,36 +1,45 @@
-import { system, world } from "@minecraft/server";
+import { world, system } from "@minecraft/server";
 import { CONFIG } from "./config.js";
 
-export function enableAura(player) {
-    if (!player.hasTag(CONFIG.tags.aura)) {
-        player.addTag(CONFIG.tags.aura);
-    }
+const playerAngles = new Map();
 
-    player.onScreenDisplay.setActionBar(CONFIG.messages.auraOn);
+export function startAura() {
+
+    system.runInterval(() => {
+
+        if (!CONFIG.aura.enabled) return;
+
+        for (const player of world.getAllPlayers()) {
+
+            if (!player.hasTag("lpv_aura")) continue;
+
+            let angle = playerAngles.get(player.id) ?? 0;
+
+            angle += CONFIG.aura.speed;
+
+            playerAngles.set(player.id, angle);
+
+            const location = player.location;
+
+            const radius = CONFIG.aura.radius;
+            const height = CONFIG.aura.height;
+
+            for (let i = 0; i < CONFIG.aura.particles; i++) {
+
+                const a =
+                    angle +
+                    ((Math.PI * 2) / CONFIG.aura.particles) * i;
+
+                const x = location.x + Math.cos(a) * radius;
+                const y = location.y + height;
+                const z = location.z + Math.sin(a) * radius;
+
+                player.dimension.spawnParticle(
+                    CONFIG.aura.particle,
+                    { x, y, z }
+                );
+            }
+        }
+
+    }, CONFIG.aura.interval);
 }
-
-export function disableAura(player) {
-    player.removeTag(CONFIG.tags.aura);
-    player.onScreenDisplay.setActionBar(CONFIG.messages.auraOff);
-}
-
-export function toggleAura(player) {
-    if (player.hasTag(CONFIG.tags.aura)) {
-        disableAura(player);
-    } else {
-        enableAura(player);
-    }
-}
-
-system.runInterval(() => {
-    for (const player of world.getAllPlayers()) {
-
-        if (!player.hasTag(CONFIG.tags.aura)) continue;
-
-        const { x, y, z } = player.location;
-
-        player.dimension.runCommand(
-            `particle ${CONFIG.aura.particle} ${x} ${y + CONFIG.aura.yOffset} ${z}`
-        );
-    }
-}, CONFIG.aura.interval);
