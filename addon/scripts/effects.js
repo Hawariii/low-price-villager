@@ -1,7 +1,27 @@
 import { world, system } from "@minecraft/server";
 import { CONFIG } from "./config.js";
 
-const TAG = "lpv_villager";
+const VILLAGER_TAG = "lpv_villager";
+const AURA_TAG = "lpv_aura";
+const INIT_TAG = "lpv_initialized";
+
+// ==========================
+// Default ON (sekali saja)
+// ==========================
+
+world.afterEvents.playerSpawn.subscribe((event) => {
+
+    if (!event.initialSpawn) return;
+
+    const player = event.player;
+
+    if (player.hasTag(INIT_TAG)) return;
+
+    player.addTag(INIT_TAG);
+    player.addTag(VILLAGER_TAG);
+    player.addTag(AURA_TAG);
+
+});
 
 // ==========================
 // Enable
@@ -9,11 +29,12 @@ const TAG = "lpv_villager";
 
 export function enableVillager(player) {
 
-    if (player.hasTag(TAG)) return;
+    if (player.hasTag(VILLAGER_TAG)) return;
 
-    player.addTag(TAG);
+    player.addTag(VILLAGER_TAG);
 
     player.sendMessage(CONFIG.messages.villagerOn);
+
 }
 
 // ==========================
@@ -22,13 +43,14 @@ export function enableVillager(player) {
 
 export function disableVillager(player) {
 
-    if (!player.hasTag(TAG)) return;
+    if (!player.hasTag(VILLAGER_TAG)) return;
 
-    player.removeTag(TAG);
+    player.removeTag(VILLAGER_TAG);
 
     player.removeEffect(CONFIG.villager.effect);
 
     player.sendMessage(CONFIG.messages.villagerOff);
+
 }
 
 // ==========================
@@ -37,7 +59,7 @@ export function disableVillager(player) {
 
 export function isVillagerEnabled(player) {
 
-    return player.hasTag(TAG);
+    return player.hasTag(VILLAGER_TAG);
 
 }
 
@@ -49,7 +71,7 @@ system.runInterval(() => {
 
     for (const player of world.getAllPlayers()) {
 
-        if (!player.hasTag(TAG)) continue;
+        if (!player.hasTag(VILLAGER_TAG)) continue;
 
         player.addEffect(
             CONFIG.villager.effect,
@@ -59,8 +81,10 @@ system.runInterval(() => {
                 showParticles: CONFIG.villager.showParticles
             }
         );
+
     }
 
+}, CONFIG.interval);
 }, CONFIG.interval);        enableVillager(player);
     }
 }
