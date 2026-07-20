@@ -3,9 +3,6 @@ import { CONFIG } from "./config.js";
 
 const TAG = "lpv_aura";
 
-// Menyimpan rotasi setiap player
-const playerRotation = new Map();
-
 // ==========================
 // Enable
 // ==========================
@@ -17,6 +14,7 @@ export function enableAura(player) {
     player.addTag(TAG);
 
     player.sendMessage(CONFIG.messages.auraOn);
+
 }
 
 // ==========================
@@ -30,6 +28,7 @@ export function disableAura(player) {
     player.removeTag(TAG);
 
     player.sendMessage(CONFIG.messages.auraOff);
+
 }
 
 // ==========================
@@ -43,7 +42,7 @@ export function isAuraEnabled(player) {
 }
 
 // ==========================
-// Aura Loop
+// Random Aura
 // ==========================
 
 system.runInterval(() => {
@@ -52,15 +51,24 @@ system.runInterval(() => {
 
         if (!player.hasTag(TAG)) continue;
 
-        let rotation = playerRotation.get(player.id) ?? 0;
-
-        rotation += CONFIG.aura.speed;
-
-        playerRotation.set(player.id, rotation);
-
         const { x, y, z } = player.location;
 
-        for (let i = 0; i < CONFIG.aura.particles; i++) {
+        // Spawn 3 particle setiap interval
+        for (let i = 0; i < 3; i++) {
+
+            const px = x + (Math.random() - 0.5) * 1.6;
+            const py = y + 0.3 + Math.random() * 1.5;
+            const pz = z + (Math.random() - 0.5) * 1.6;
+
+            player.runCommand(
+                `particle ${CONFIG.aura.particle} ${px} ${py} ${pz}`
+            );
+
+        }
+
+    }
+
+}, CONFIG.aura.interval);        for (let i = 0; i < CONFIG.aura.particles; i++) {
 
             const angle =
                 rotation +
