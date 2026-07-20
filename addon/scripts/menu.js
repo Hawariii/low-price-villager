@@ -1,40 +1,29 @@
 import { ActionFormData } from "@minecraft/server-ui";
-import { CONFIG } from "./config.js";
-import { toggleVillager } from "./effects.js";
-import { toggleAura } from "./particles.js";
 
-export function openMenu(player) {
+export function openMenu(player, villagerEnabled, auraEnabled) {
 
-    const villagerStatus = player.hasTag(CONFIG.tags.villager)
-        ? "§aEnabled"
-        : "§cDisabled";
+    const form = new ActionFormData();
 
-    const auraStatus = player.hasTag(CONFIG.tags.aura)
-        ? "§aEnabled"
-        : "§cDisabled";
+    form.title("§6Low Price Villager");
 
-    const form = new ActionFormData()
-        .title("§6Low Price Villager")
-        .body(
+    form.body(
 `§fCurrent Status
 
-🟢 Villager Discount
-${villagerStatus}
+§a🟢 Villager Discount
+${villagerEnabled ? "§aEnabled" : "§cDisabled"}
 
-✨ Enchant Aura
-${auraStatus}
+§d✨ Enchant Aura
+${auraEnabled ? "§aEnabled" : "§cDisabled"}
 
 §8────────────────────`
-        )
-        .button("§eToggle Villager Discount")
-        .button("§dToggle Enchant Aura")
-        .button("§7Close");
+    );
 
-    form.show(player).then((result) => {
-        if (result.canceled) return;
+    form.button("§eToggle Villager Discount");
+    form.button("§dToggle Enchant Aura");
+    form.button("§7Close");
 
-        switch (result.selection) {
-            case 0:
+    return form.show(player);
+}            case 0:
                 toggleVillager(player);
                 break;
 
