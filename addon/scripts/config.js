@@ -27,7 +27,7 @@ export const CONFIG = {
     aura: {
         particle: "minecraft:enchanting_table_particle",
 
-        interval: 2,
+        interval: 1,
 
         particles: 8,
 
