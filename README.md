@@ -2,7 +2,7 @@
 
 Make every villager trade cost just **1 Emerald** instantly in Minecraft Bedrock Edition.
 
-This lightweight addon automatically applies the **Hero of the Village** effect without disabling achievements. It also includes an optional Enchant Aura and an easy in-game toggle menu.
+This lightweight addon automatically applies the **Hero of the Village** effect without disabling achievements. It also includes an optional Enchant Aura, an easy in-game toggle menu, and full **Achievement Support**.
 
 ## Features
 
