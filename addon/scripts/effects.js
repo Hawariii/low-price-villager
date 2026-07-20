@@ -1,39 +1,66 @@
+import { world, system } from "@minecraft/server";
 import { CONFIG } from "./config.js";
 
+const TAG = "lpv_villager";
+
+// ==========================
+// Enable
+// ==========================
+
 export function enableVillager(player) {
-    if (!player.hasTag(CONFIG.tags.villager)) {
-        player.addTag(CONFIG.tags.villager);
-    }
 
-    player.runCommand(
-        `effect @s ${CONFIG.villager.effect} ${CONFIG.villager.duration} ${CONFIG.villager.amplifier} ${CONFIG.villager.hideParticles}`
-    );
+    if (player.hasTag(TAG)) return;
 
-    player.onScreenDisplay.setActionBar(CONFIG.messages.villagerOn);
+    player.addTag(TAG);
+
+    player.sendMessage(CONFIG.messages.villagerOn);
 }
+
+// ==========================
+// Disable
+// ==========================
 
 export function disableVillager(player) {
-    player.removeTag(CONFIG.tags.villager);
 
-    player.runCommand(
-        `effect @s clear ${CONFIG.villager.effect}`
-    );
+    if (!player.hasTag(TAG)) return;
 
-    player.onScreenDisplay.setActionBar(CONFIG.messages.villagerOff);
+    player.removeTag(TAG);
+
+    player.removeEffect(CONFIG.villager.effect);
+
+    player.sendMessage(CONFIG.messages.villagerOff);
 }
 
-export function applyVillager(player) {
-    if (!player.hasTag(CONFIG.tags.villager)) return;
+// ==========================
+// Status
+// ==========================
 
-    player.runCommand(
-        `effect @s ${CONFIG.villager.effect} ${CONFIG.villager.duration} ${CONFIG.villager.amplifier} ${CONFIG.villager.hideParticles}`
-    );
+export function isVillagerEnabled(player) {
+
+    return player.hasTag(TAG);
+
 }
 
-export function toggleVillager(player) {
-    if (player.hasTag(CONFIG.tags.villager)) {
-        disableVillager(player);
-    } else {
-        enableVillager(player);
+// ==========================
+// Refresh Effect
+// ==========================
+
+system.runInterval(() => {
+
+    for (const player of world.getAllPlayers()) {
+
+        if (!player.hasTag(TAG)) continue;
+
+        player.addEffect(
+            CONFIG.villager.effect,
+            CONFIG.duration,
+            {
+                amplifier: CONFIG.villager.amplifier,
+                showParticles: CONFIG.villager.showParticles
+            }
+        );
+    }
+
+}, CONFIG.interval);        enableVillager(player);
     }
 }
